@@ -21,10 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Docker (official script)
-        run: |
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sh get-docker.sh
+      - name: Check Docker version
+        run: docker --version
 
       - name: Run Repocket Docker container
         run: |
@@ -35,12 +33,6 @@ jobs:
             -e RP_API_KEY="${{ secrets.REPOCKET_API_KEY }}" \
             repocket/repocket
 
-      - name: Wait and show logs
-        run: |
-          sleep 15
-          docker logs repocket
-
-      # Wait and display container logs
       - name: Wait and show logs
         run: |
           sleep 15
