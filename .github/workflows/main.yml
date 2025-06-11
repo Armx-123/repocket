@@ -15,24 +15,17 @@ on:
 
 # A workflow run is made up of one or more jobs
 jobs:
-  # This workflow contains a single job called "repocket"
   repocket:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v4
 
-      # Installs Docker
-      - name: Install Docker
+      - name: Install Docker (official script)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo systemctl start docker
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sh get-docker.sh
 
-      # Runs Repocket container using secrets
       - name: Run Repocket Docker container
         run: |
           docker run -d \
@@ -41,6 +34,11 @@ jobs:
             -e RP_EMAIL="${{ secrets.REPOCKET_EMAIL }}" \
             -e RP_API_KEY="${{ secrets.REPOCKET_API_KEY }}" \
             repocket/repocket
+
+      - name: Wait and show logs
+        run: |
+          sleep 15
+          docker logs repocket
 
       # Wait and display container logs
       - name: Wait and show logs
