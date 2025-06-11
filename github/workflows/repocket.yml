@@ -1,0 +1,32 @@
+name: Run Repocket
+
+on:
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  run-repocket:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+
+      - name: Run Repocket Docker container
+        run: |
+          docker run -d \
+            --name repocket \
+            --restart=always \
+            -e RP_EMAIL="${{ secrets.REPOCKET_EMAIL }}" \
+            -e RP_API_KEY="${{ secrets.REPOCKET_API_KEY }}" \
+            repocket/repocket
+
+      - name: Wait and Show Logs
+        run: |
+          sleep 15
+          docker logs repocket
